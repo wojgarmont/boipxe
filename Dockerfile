@@ -43,7 +43,7 @@ ADD monit/monitrc /etc/monitrc
 ADD monit/*.conf /etc/monit.d/
 ADD monit/*.sh /etc/monit.d/
 RUN chmod 700 /etc/monitrc
-RUN chmod 700 /etc/monitrc.d/*.sh
+RUN chmod 700 /etc/monit.d/*.sh
 
 # Dodanie skryptu startowego
 ADD start.sh /start.sh
