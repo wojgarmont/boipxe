@@ -1,2 +1,2 @@
 #!/bin/sh
-/usr/sbin/dnsmasq -C /etc/dnsmasq.conf --dhcp-broadcast --log-facility=-
+/usr/sbin/dnsmasq -C /etc/dnsmasq.conf -k --dhcp-broadcast --log-facility=/proc/1/fd/1
