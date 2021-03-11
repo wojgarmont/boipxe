@@ -3,8 +3,11 @@ LABEL maintainer="wojciech.gabryjelski@p.lodz.pl"
 
 ENV BASEDIR /srv
 ENV CONFDIR $BASEDIR/etc
+ENV IPXEVER v1.21.1
 
 # Instalacja iPXE
+ADD ipxe/embed.ipxe /tmp/embed.ipxe
+ADD ipxe/embed_debug.ipxe /tmp/embed_debug.ipxe
 RUN apk --update --no-cache add --virtual .build-deps build-base perl git \
   && git clone --branch $IPXEVER http://git.ipxe.org/ipxe.git \
   && cd ipxe/src \
