@@ -3,11 +3,13 @@ LABEL maintainer="wojciech.gabryjelski@p.lodz.pl"
 
 ENV BASEDIR /srv
 ENV CONFDIR $BASEDIR/etc
+ENV IPXEVER v1.21.1
 
 # Instalacja iPXE
 ADD ipxe/embed.ipxe /tmp/embed.ipxe 
 RUN apk --update --no-cache add --virtual .build-deps build-base perl git \
-  && git clone http://git.ipxe.org/ipxe.git \
+#  && git clone http://git.ipxe.org/ipxe.git \
+  && git clone --branch $IPXEVER http://git.ipxe.org/ipxe.git \
   && cd ipxe/src \
   && echo "make -j$(nproc) bin-x86_64-efi/ipxe.efi EMBED=/tmp/embed.ipxe" \
   && make -j$(nproc) bin-x86_64-efi/ipxe.efi EMBED=/tmp/embed.ipxe \
