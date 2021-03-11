@@ -5,14 +5,30 @@ ENV BASEDIR /srv
 ENV CONFDIR $BASEDIR/etc
 
 # Instalacja iPXE
-ADD ipxe/embed.ipxe /tmp/embed.ipxe 
 RUN apk --update --no-cache add --virtual .build-deps build-base perl git \
-  && git clone http://git.ipxe.org/ipxe.git \
+  && git clone --branch $IPXEVER http://git.ipxe.org/ipxe.git \
   && cd ipxe/src \
+  && sed -Ei 's/\/\/\#define PCI_CMD/\#define PCI_CMD/g' config/general.h \
+  && sed -Ei 's/\/\/\#define VLAN_CMD/\#define VLAN_CMD/g' config/general.h \
+  && sed -Ei 's/\/\/\#define PING_CMD/\#define PING_CMD/g' config/general.h \
+  && sed -Ei 's/\/\/\IPSTAT_CMD/\IPSTAT_CMD/g' config/general.h \
   && echo "make -j$(nproc) bin-x86_64-efi/ipxe.efi EMBED=/tmp/embed.ipxe" \
   && make -j$(nproc) bin-x86_64-efi/ipxe.efi EMBED=/tmp/embed.ipxe \
   && cp -a /ipxe/src/bin-x86_64-efi/ipxe.efi $BASEDIR/ \
+  && make clean \
+  && echo "make -j$(nproc) bin-x86_64-efi/ipxe.efi EMBED=/tmp/embed_debug.ipxe" \
+  && make -j$(nproc) bin-x86_64-efi/ipxe.efi EMBED=/tmp/embed_debug.ipxe \
+  && cp -a /ipxe/src/bin-x86_64-efi/ipxe.efi $BASEDIR/ipxe_debug.efi \
+  && make clean \
+  && echo "make -j$(nproc) bin-x86_64-efi/snponly.efi EMBED=/tmp/embed.ipxe" \
+  && make -j$(nproc) bin-x86_64-efi/snponly.efi EMBED=/tmp/embed.ipxe \
+  && cp -a /ipxe/src/bin-x86_64-efi/snponly.efi $BASEDIR/snponly.efi \
+  && make clean \
+  && echo "make -j$(nproc) bin-x86_64-efi/snponly.efi EMBED=/tmp/embed_debug.ipxe" \
+  && make -j$(nproc) bin-x86_64-efi/snponly.efi EMBED=/tmp/embed_debug.ipxe \
+  && cp -a /ipxe/src/bin-x86_64-efi/snponly.efi $BASEDIR/snponly_debug.efi \
   && rm /tmp/embed.ipxe \
+  && rm /tmp/embed_debug.ipxe \
   && cd / \
   && rm -rf /ipxe \
   && apk del .build-deps
